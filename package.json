@@ -45,7 +45,7 @@
         "less-plugin-autoprefix": "^1.5.1",
         "load-grunt-tasks": "3.5.0",
         "lodash": "4.15.0",
-        "phantomjs": "1.9.18",
+        "phantomjs-prebuilt": "2.1.16",
         "pica": "^3.0.4",
         "q": "1.4.1",
         "semver": "^4.1.0",
