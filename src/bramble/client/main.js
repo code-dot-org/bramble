@@ -423,7 +423,7 @@ define([
                 }
                 // Anything else is some kind of event we need to re-trigger
                 // and alter internal state.
-                else {
+                else if (data.type) {
                     // Strip the "bramble:*" namespace off event name
                     var eventName = data.type.replace(/^bramble:/, '');
                     delete data.type;

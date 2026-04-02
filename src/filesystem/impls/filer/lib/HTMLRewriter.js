@@ -64,7 +64,8 @@ define(function (require, exports, module) {
             doc.documentElement.insertBefore(head, doc.documentElement.firstChild);
         }
 
-        var meta = doc.createElement("meta");
+        var meta = doc.querySelector('meta[http-equiv="Content-Security-Policy"]') ||
+                   doc.createElement("meta");
         meta.setAttribute("http-equiv", "Content-Security-Policy");
         meta.setAttribute("content", "connect-src blob:;");
         head.insertBefore(meta, head.firstChild);
