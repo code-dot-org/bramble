@@ -56,23 +56,6 @@ define(function (require, exports, module) {
         }, callback);
     };
 
-    HTMLRewriter.prototype.injectCSP = function(callback) {
-        var doc = this.doc;
-        var head = doc.head || doc.querySelector("head");
-        if(!head) {
-            head = doc.createElement("head");
-            doc.documentElement.insertBefore(head, doc.documentElement.firstChild);
-        }
-
-        var meta = doc.querySelector('meta[http-equiv="Content-Security-Policy"]') ||
-                   doc.createElement("meta");
-        meta.setAttribute("http-equiv", "Content-Security-Policy");
-        meta.setAttribute("content", "connect-src blob:;");
-        head.insertBefore(meta, head.firstChild);
-
-        callback();
-    };
-
     HTMLRewriter.prototype.styles = function(callback) {
         var path = this.path;
         var elements = this.doc.querySelectorAll("style");
@@ -214,7 +197,6 @@ define(function (require, exports, module) {
         }
 
         Async.series([
-            iterator("injectCSP"),
             iterator("styles"),
             iterator("styleAttributes"),
             iterator("elements", "iframe", "src"),
