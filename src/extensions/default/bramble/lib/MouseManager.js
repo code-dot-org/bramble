@@ -212,12 +212,13 @@ define(function (require, exports, module) {
         _prevLineMarker = codeMirror.markText(from, to, { className: "bramble-inspector-highlight" });
     }
 
-    function getRemoteScript(filename) {
+    function getRemoteScript(filename, nonce) {
         filename = filename || "unknown";
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
 
         // Track scroll position per filename, so you can be at different points in each doc
-        return "<script>window.___brambleFilename = '" + filename + "';</script>\n" +
-               "<script>\n" + MouseManagerRemote + "</script>\n";
+        return "<script" + nonceAttr + ">window.___brambleFilename = '" + filename + "';</script>\n" +
+               "<script" + nonceAttr + ">\n" + MouseManagerRemote + "</script>\n";
     }
 
     exports.enableInspector = enableInspector;

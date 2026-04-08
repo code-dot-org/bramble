@@ -9,10 +9,11 @@ define(function (require, exports, module) {
 
     var XHRManagerRemote = require("text!lib/XHRManagerRemote.js");
 
-    function getRemoteScript() {
+    function getRemoteScript(nonce) {
         // Intercept XHR requests, but only if we're rewriting URLs (e.g., Blob URLs)
         if(UrlCache.getShouldRewriteUrls()) {
-            return "<script>\n" + XHRManagerRemote + "</script>\n";
+            var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
+            return "<script" + nonceAttr + ">\n" + XHRManagerRemote + "</script>\n";
         }
         return "";
     }

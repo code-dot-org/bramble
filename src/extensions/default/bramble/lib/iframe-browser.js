@@ -43,7 +43,8 @@ define(function (require, exports, module) {
         // Create the iFrame for the blob to live in later
         var iframeConfig = {
             id: "bramble-iframe-browser",
-            frameborder: 0
+            frameborder: 0,
+            sandbox: 'allow-forms allow-same-origin allow-scripts'
         };
 
         // CDO-Bramble: Upstream includes an 'allow' attribute that enables geolocation, microphone, and camera access.

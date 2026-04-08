@@ -1,5 +1,5 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
-/*global define, brackets */
+/*global define, brackets, crypto, Uint8Array */
 define(function (require, exports, module) {
     "use strict";
 
@@ -18,6 +18,14 @@ define(function (require, exports, module) {
         LinkManager             = require("lib/LinkManager");
 
     var _shouldUseBlobURL;
+
+    function generateNonce() {
+        var array = new Uint8Array(16);
+        crypto.getRandomValues(array);
+        return Array.prototype.map.call(array, function(b) {
+            return ("0" + b.toString(16)).slice(-2);
+        }).join("");
+    }
 
     function _isHTML(path) {
         return LiveDevelopmentUtils.isStaticHtmlFileExt(path);
@@ -116,8 +124,8 @@ define(function (require, exports, module) {
             });
         }
 
-        function serveHTML(path, html, server, callback) {
-            HTMLRewriter.rewrite(path, html, server, function(err, html) {
+        function serveHTML(path, html, server, nonce, callback) {
+            HTMLRewriter.rewrite(path, html, server, nonce, function(err, html) {
                 if(err) {
                     callback(err);
                     return;
@@ -139,9 +147,11 @@ define(function (require, exports, module) {
             });
         }
 
+        var nonce = generateNonce();
+
         function serve(body) {
             if(_isHTML(path)) {
-                serveHTML(path, body, server, callback);
+                serveHTML(path, body, server, nonce, callback);
             } else if (_isCSS(path)) {
                 serveCSS(path, body, callback);
             } else {
@@ -151,7 +161,7 @@ define(function (require, exports, module) {
 
         // Prefer the LiveDoc, but use what's on disk if we have to
         if(liveDocument) {
-            return serve(liveDocument.getResponseData().body);
+            return serve(liveDocument.getResponseData(nonce).body);
         }
 
         FilerUtils
@@ -164,7 +174,7 @@ define(function (require, exports, module) {
 
                 // Since we don't have a LiveDoc (yet) and aren't instrumenting fully,
                 // at least inject the necessary remote scripts so preview APIs work.
-                var scripts = PostMessageTransport.getRemoteScript(path);
+                var scripts = PostMessageTransport.getRemoteScript(path, nonce);
                 var scriptsWithEndTag = scripts + "$&";
                 var headRegex = new RegExp(/<\/\s*head>/);
                 var htmlRegex = new RegExp(/<\/\s*html>/);

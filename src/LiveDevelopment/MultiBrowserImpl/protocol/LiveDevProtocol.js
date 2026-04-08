@@ -198,28 +198,32 @@ define(function (require, exports, module) {
      * Returns a script that should be injected into the HTML that's launched in the
      * browser in order to implement remote commands that handle protocol requests.
      * Includes the <script> tags.
+     * @param {string} nonce CSP nonce to add to the injected script tag.
      * @return {string}
      */
-    function getRemoteFunctionsScript() {
+    function getRemoteFunctionsScript(nonce) {
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
         var script = "";
         // Inject DocumentObserver into the browser (tracks related documents)
         script += DocumentObserver;
         // Inject remote functions into the browser.
         script += "window._LD=(" + RemoteFunctions + "())";
-        return "<script>\n" + script + "</script>\n";
+        return "<script" + nonceAttr + ">\n" + script + "</script>\n";
     }
 
     /**
      * Returns a script that should be injected into the HTML that's launched in the
      * browser in order to handle protocol requests. Includes the <script> tags.
      * This script will also include the script required by the transport, if any.
+     * @param {string} nonce CSP nonce to add to the injected script tags.
      * @return {string}
      */
-    function getRemoteScript() {
-        var transportScript = _transport.getRemoteScript() || "";
-        var remoteFunctionsScript = getRemoteFunctionsScript() || "";
+    function getRemoteScript(nonce) {
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
+        var transportScript = _transport.getRemoteScript(null, nonce) || "";
+        var remoteFunctionsScript = getRemoteFunctionsScript(nonce) || "";
         return transportScript +
-            "<script>\n" + LiveDevProtocolRemote + "</script>\n" +
+            "<script" + nonceAttr + ">\n" + LiveDevProtocolRemote + "</script>\n" +
             remoteFunctionsScript;
     }
 

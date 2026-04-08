@@ -238,17 +238,18 @@ define(function (require, exports, module) {
      * @param {string} path (Optional) a path being served, or the current LiveDoc's path if missing.
      * @return {string}
      */
-    function getRemoteScript(path) {
+    function getRemoteScript(path, nonce) {
         var currentDoc = LiveDevMultiBrowser._getCurrentLiveDoc();
         var currentPath = path || (currentDoc && currentDoc.doc.file.fullPath);
         var escapedPath = escapedPathTemplate({path: currentPath});
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
 
         return '<base href="' + UrlCache.getBaseUrl() + '">\n' +
-            "<script>\n" + PostMessageTransportRemote + "</script>\n" +
-            XHRManager.getRemoteScript() +
-            MouseManager.getRemoteScript(escapedPath) +
-            LinkManager.getRemoteScript() +
-            ConsoleManager.getRemoteScript();
+            "<script" + nonceAttr + ">\n" + PostMessageTransportRemote + "</script>\n" +
+            XHRManager.getRemoteScript(nonce) +
+            MouseManager.getRemoteScript(escapedPath, nonce) +
+            LinkManager.getRemoteScript(nonce) +
+            ConsoleManager.getRemoteScript(nonce);
     }
 
     // URL of document being rewritten/launched (if any)
