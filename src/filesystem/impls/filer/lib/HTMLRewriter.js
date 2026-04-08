@@ -76,7 +76,7 @@ define(function (require, exports, module) {
         var meta = doc.querySelector('meta[http-equiv="Content-Security-Policy"]') ||
                    doc.createElement("meta");
         meta.setAttribute("http-equiv", "Content-Security-Policy");
-        meta.setAttribute("content", "script-src 'nonce-" + this.nonce + "'; connect-src blob:;");
+        meta.setAttribute("content", "script-src 'nonce-" + this.nonce + "' 'unsafe-eval'; connect-src blob:;");
         head.insertBefore(meta, head.firstChild);
 
         callback();
