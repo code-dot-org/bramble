@@ -119,6 +119,7 @@ define(function (require, exports, module) {
 
     /**
      * Returns the instrumented version of the file.
+     * @param {string} nonce CSP nonce to add to injected script tags.
      * @return {{body: string}} instrumented doc
      */
     LiveHTMLDocument.prototype.getResponseData = function (nonce) {

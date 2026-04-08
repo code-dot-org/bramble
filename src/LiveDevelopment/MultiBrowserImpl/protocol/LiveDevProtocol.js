@@ -198,6 +198,7 @@ define(function (require, exports, module) {
      * Returns a script that should be injected into the HTML that's launched in the
      * browser in order to implement remote commands that handle protocol requests.
      * Includes the <script> tags.
+     * @param {string} nonce CSP nonce to add to the injected script tag.
      * @return {string}
      */
     function getRemoteFunctionsScript(nonce) {
@@ -214,6 +215,7 @@ define(function (require, exports, module) {
      * Returns a script that should be injected into the HTML that's launched in the
      * browser in order to handle protocol requests. Includes the <script> tags.
      * This script will also include the script required by the transport, if any.
+     * @param {string} nonce CSP nonce to add to the injected script tags.
      * @return {string}
      */
     function getRemoteScript(nonce) {
