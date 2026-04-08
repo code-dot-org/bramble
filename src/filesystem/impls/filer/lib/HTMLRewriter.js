@@ -82,6 +82,14 @@ define(function (require, exports, module) {
         callback();
     };
 
+    HTMLRewriter.prototype.stripMetaRefresh = function(callback) {
+        var elements = this.doc.querySelectorAll('meta[http-equiv="refresh"], meta[http-equiv="Refresh"]');
+        Array.prototype.forEach.call(elements, function(element) {
+            element.parentNode.removeChild(element);
+        });
+        callback();
+    };
+
     HTMLRewriter.prototype.styles = function(callback) {
         var path = this.path;
         var elements = this.doc.querySelectorAll("style");
@@ -228,6 +236,7 @@ define(function (require, exports, module) {
 
         Async.series([
             iterator("injectCSP"),
+            iterator("stripMetaRefresh"),
             iterator("styles"),
             iterator("styleAttributes"),
             iterator("elements", "iframe", "src"),
