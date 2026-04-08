@@ -4,8 +4,9 @@ define(function (require, exports, module) {
     var ConsoleInterfaceManager = require("lib/ConsoleInterfaceManager"),
         ConsoleManagerRemote = require("text!lib/ConsoleManagerRemote.js");
 
-    function getRemoteScript() {
-        return "<script>\n" + ConsoleManagerRemote + "</script>\n";
+    function getRemoteScript(nonce) {
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
+        return "<script" + nonceAttr + ">\n" + ConsoleManagerRemote + "</script>\n";
     }
 
     function isConsoleRequest(msg) {

@@ -50,8 +50,9 @@ define(function (require, exports, module) {
      * Returns the script that should be injected into the browser to handle the other end of the transport.
      * @return {string}
      */
-    function getRemoteScript() {
-        return "<script>\n" +
+    function getRemoteScript(path, nonce) {
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
+        return "<script" + nonceAttr + ">\n" +
             NodeSocketTransportRemote +
             "this._Brackets_LiveDev_Socket_Transport_URL = 'ws://localhost:" + SOCKET_PORT + "';\n" +
             "</script>\n";

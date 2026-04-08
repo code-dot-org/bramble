@@ -1,5 +1,5 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
-/*global define, DOMParser, XMLSerializer */
+/*global define, DOMParser, XMLSerializer, crypto, Uint8Array */
 define(function (require, exports, module) {
     "use strict";
 
@@ -18,14 +18,23 @@ define(function (require, exports, module) {
      */
     var jsEnabledOverride = false;
 
+    function generateNonce() {
+        var array = new Uint8Array(16);
+        crypto.getRandomValues(array);
+        return Array.prototype.map.call(array, function(b) {
+            return ("0" + b.toString(16)).slice(-2);
+        }).join("");
+    }
+
     /**
      * Rewrite all external resources (links, scripts, img sources, ...) to
      * blob URL Objects from the fs.
      */
-    function HTMLRewriter(path, html, server) {
+    function HTMLRewriter(path, html, server, nonce) {
         this.path = path;
         this.dir = Path.dirname(path);
         this.server = server;
+        this.nonce = nonce || generateNonce();
 
         // Turn this html into a DOM, process it
         var parser = new DOMParser();
@@ -67,7 +76,7 @@ define(function (require, exports, module) {
         var meta = doc.querySelector('meta[http-equiv="Content-Security-Policy"]') ||
                    doc.createElement("meta");
         meta.setAttribute("http-equiv", "Content-Security-Policy");
-        meta.setAttribute("content", "connect-src blob:;");
+        meta.setAttribute("content", "script-src 'nonce-" + this.nonce + "'; connect-src blob:;");
         head.insertBefore(meta, head.firstChild);
 
         callback();
@@ -179,10 +188,14 @@ define(function (require, exports, module) {
         callback();
     };
 
-    function rewrite(path, html, server, callback) {
+    function rewrite(path, html, server, nonce, callback) {
         if(typeof server === "function") {
             callback = server;
             server = null;
+            nonce = null;
+        } else if(typeof nonce === "function") {
+            callback = nonce;
+            nonce = null;
         }
         // We may or may not have a server for rewriting live CSS docs in <link>s (e.g.,
         // when we `fs.writeFile()` and generate cached Blob URLs in `handleFile()`).
@@ -202,7 +215,7 @@ define(function (require, exports, module) {
             return callback(null, html);
         }
 
-        var rewriter = new HTMLRewriter(path, html, server);
+        var rewriter = new HTMLRewriter(path, html, server, nonce);
 
         function iterator(functionName) {
             var args = Array.prototype.slice.call(arguments, 1);

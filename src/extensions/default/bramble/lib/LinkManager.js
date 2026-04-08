@@ -9,9 +9,10 @@ define(function (require, exports, module) {
 
     var LinkManagerRemote = require("text!lib/LinkManagerRemote.js");
 
-    function getRemoteScript() {
+    function getRemoteScript(nonce) {
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
         // Intercept clicks on <a> in the preview document
-        return "<script>\n" + LinkManagerRemote + "</script>\n";
+        return "<script" + nonceAttr + ">\n" + LinkManagerRemote + "</script>\n";
     }
 
     function getNavigationPath(message) {

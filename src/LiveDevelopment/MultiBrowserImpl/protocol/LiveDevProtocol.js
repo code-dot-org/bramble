@@ -200,13 +200,14 @@ define(function (require, exports, module) {
      * Includes the <script> tags.
      * @return {string}
      */
-    function getRemoteFunctionsScript() {
+    function getRemoteFunctionsScript(nonce) {
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
         var script = "";
         // Inject DocumentObserver into the browser (tracks related documents)
         script += DocumentObserver;
         // Inject remote functions into the browser.
         script += "window._LD=(" + RemoteFunctions + "())";
-        return "<script>\n" + script + "</script>\n";
+        return "<script" + nonceAttr + ">\n" + script + "</script>\n";
     }
 
     /**
@@ -215,11 +216,12 @@ define(function (require, exports, module) {
      * This script will also include the script required by the transport, if any.
      * @return {string}
      */
-    function getRemoteScript() {
-        var transportScript = _transport.getRemoteScript() || "";
-        var remoteFunctionsScript = getRemoteFunctionsScript() || "";
+    function getRemoteScript(nonce) {
+        var nonceAttr = nonce ? ' nonce="' + nonce + '"' : '';
+        var transportScript = _transport.getRemoteScript(null, nonce) || "";
+        var remoteFunctionsScript = getRemoteFunctionsScript(nonce) || "";
         return transportScript +
-            "<script>\n" + LiveDevProtocolRemote + "</script>\n" +
+            "<script" + nonceAttr + ">\n" + LiveDevProtocolRemote + "</script>\n" +
             remoteFunctionsScript;
     }
 
