@@ -121,7 +121,7 @@ define(function (require, exports, module) {
      * Returns the instrumented version of the file.
      * @return {{body: string}} instrumented doc
      */
-    LiveHTMLDocument.prototype.getResponseData = function (enabled, nonce) {
+    LiveHTMLDocument.prototype.getResponseData = function (nonce) {
         var body;
         if (this._instrumentationEnabled) {
             body = HTMLInstrumentation.generateInstrumentedHTML(this.editor, this.protocol.getRemoteScript(nonce));
